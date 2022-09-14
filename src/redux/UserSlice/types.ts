@@ -1,7 +1,9 @@
 export interface initialUsersTypes {
-    users: Array<usersItemType>
+    users: IUsersItemType[],
+    isLoading: boolean,
+    error: string,
 }
-export interface usersItemType{
+export interface IUsersItemType{
     createdAt: number,
     id: string,
     name: string,

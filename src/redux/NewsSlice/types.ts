@@ -1,7 +1,9 @@
 export interface initialNewsTypes {
-    news: Array<newsItemType>
+    news: Array<INewsItemType>
+  isLoading: boolean,
+  error: string,
 }
-export interface newsItemType{
+export interface INewsItemType{
   title: string,
   content: string,
   author: string,

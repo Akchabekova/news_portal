@@ -34,18 +34,12 @@ const PostDate = styled.div`
 
 
 
-
-
-
-
-
-
 const News = () => {
- const { news } = useAppSelector((s) => s.newsReducer)
+    const { news, isLoading, error } = useAppSelector((s) => s.newsReducer)
+    if (isLoading) return <div>"Loading..."</div>
     return (
         <div>
-            {
-                news.map((item)=> (
+            {news.map((item) => (
                 <Container key={item.id}>
                     <PostCase>
                         <PostTitle>{item.title}</PostTitle>
@@ -54,7 +48,7 @@ const News = () => {
                         <PostDate></PostDate>
                     </PostCase>
                 </Container>
-                ))
+            ))
             }
         </div>
     );
