@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice, PayloadAction, Reducer} from "@reduxjs/to
 import axios from "axios";
 import {INewsItemType, initialNewsTypes} from "./types";
 import {IUsersItemType} from "../UserSlice/types";
+import {addUsers} from "../UserSlice/UserSlice";
 
 
 
@@ -16,6 +17,17 @@ export const fetchNews = createAsyncThunk(
     async (  thunkAPI) => {
         const response = await axios("https://631e270c9f946df7dc3ec0cd.mockapi.io/news")
         return response.data
+    }
+)
+
+export const addNews = createAsyncThunk(
+    "news/addNews",
+    async (values:INewsItemType, thunkAPI) => {
+        try{
+            const response = await axios.post ("https://631e270c9f946df7dc3ec0cd.mockapi.io/news", values)
+        }catch (error) {
+            return thunkAPI.rejectWithValue("Данные не загрузились")
+        }
     }
 )
 
@@ -35,6 +47,18 @@ const newsSlice = createSlice({
             state.isLoading = false;
             state.error = action.payload
         },
+        [addNews.pending.type]: (state) => {
+            state.isLoading = true
+        },
+        [addNews.fulfilled.type]: (state, action: PayloadAction<INewsItemType[]>) => {
+            state.news = action.payload
+            state.isLoading = false
+            state.error = ''
+        },
+        [addNews.rejected.type]: (state, action: PayloadAction<string>) => {
+            state.isLoading = false
+            state.error = action.payload
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(fetchNews.fulfilled, (state, action) => {

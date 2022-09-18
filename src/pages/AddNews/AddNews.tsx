@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import {useDispatch} from "react-redux";
 import { useFormik} from "formik";
 import * as Yup from "yup";
-import {IUsersItemType} from "../../redux/UserSlice/types";
 import {INewsItemType} from "../../redux/NewsSlice/types";
+import {addNews} from "../../redux/NewsSlice/NewsSlice";
 
 
 const Container = styled.div`
@@ -87,18 +87,18 @@ const AddNews:FC<{}> = () => {
         validationSchema: Yup.object().shape({
             name: Yup.string()
                 .min(2, 'Too Short!')
-                .max(10, 'Too Long!')
-                .required('Required'),
+                .max(10, 'Too Long!') ,
+                // .required('Required'),
             surname: Yup.string()
                 .min(2, 'Too Short!')
-                .max(12, 'Too Long!')
-                .required('Required'),
+                .max(12, 'Too Long!') ,
+                // .required('Required'),
         }),
         onSubmit: (values: INewsItemType) => {
-            alert(JSON.stringify(values))
-            // dispatch(addUsers(values))
+            // alert(JSON.stringify(values))
+            dispatch(addNews(values))
             console.log("1234")
-            // formik.resetForm()
+            formik.resetForm()
             // toast.success('User added')
         }})
 
