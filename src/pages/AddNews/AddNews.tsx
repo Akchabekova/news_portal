@@ -5,6 +5,8 @@ import { useFormik} from "formik";
 import * as Yup from "yup";
 import {INewsItemType} from "../../redux/NewsSlice/types";
 import {addNews} from "../../redux/NewsSlice/NewsSlice";
+import {AppDispatch} from "../../App";
+import {useAppSelector} from "../../Hooks";
 
 
 const Container = styled.div`
@@ -67,10 +69,9 @@ const Button = styled.button`
 `;
 
 
-
 const AddNews:FC<{}> = () => {
-
- const dispatch = useDispatch()
+const dispatch = useDispatch<AppDispatch>()
+const {users} = useAppSelector(s =>s.usersReducer )
     const formik = useFormik({
         initialValues: {
             name: '',
@@ -81,32 +82,26 @@ const AddNews:FC<{}> = () => {
             createdAt: 0,
             view: 0,
             likes: 0,
-            dislakes: 0,
+            dislikes: 0,
             id: ''
         },
         validationSchema: Yup.object().shape({
             name: Yup.string()
                 .min(2, 'Too Short!')
-                .max(10, 'Too Long!') ,
-                // .required('Required'),
+                .max(10, 'Too Long!')
+                .required('Required'),
             surname: Yup.string()
                 .min(2, 'Too Short!')
-                .max(12, 'Too Long!') ,
-                // .required('Required'),
+                .max(12, 'Too Long!')
+                .required('Required'),
         }),
         onSubmit: (values: INewsItemType) => {
-            // alert(JSON.stringify(values))
             dispatch(addNews(values))
-            console.log("1234")
             formik.resetForm()
             // toast.success('User added')
         }})
 
-
-
-
-
-    return (
+ return (
         <Form onSubmit={formik.handleSubmit}>
         <Container>
             <Title> Add a new post </Title>
@@ -121,22 +116,37 @@ const AddNews:FC<{}> = () => {
                                 onChange={formik.handleChange}/>
                 </TitleCase>
                 <AuthorCase>
-                    <InputDesc> Author</InputDesc>
+                    <select>
+                    <InputDesc> Author
+                    </InputDesc>
+                    <option>None</option>
+                    {
+                        users.map(user =>
+                            <option value={user.id} key={user.id}>{user.name}{user.surname}</option>
+                        )
+                    }
+                    </select>
                     <AuthorInput placeholder="Please select the author"
                                  value={formik.values.author}
                                  id='author'
                                  name="author"
                                  type="text"
-                                 onChange={formik.handleChange}/>
+                                 onChange={formik.handleChange}
+
+                    />
+
                 </AuthorCase>
                 <NewsCase>
                     <InputDesc>News text</InputDesc>
-                    <NewsInput placeholder="Please write your post"/>
+                    <NewsInput placeholder="Please write your news"
+                               value={formik.values.content}
+                               id='content'
+                               name="content"
+                               onChange={formik.handleChange}/>
                 </NewsCase>
             </InputCollection>
             <Button type="submit">Create news</Button>
-
-        </Container>
+      </Container>
         </Form>
     );
 };

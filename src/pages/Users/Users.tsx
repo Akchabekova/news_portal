@@ -1,12 +1,13 @@
 import * as React from 'react';
-import {Field, useFormik,} from 'formik';
+import { useFormik} from 'formik';
 import styled from 'styled-components';
 import { FC } from "react"
 import * as Yup from 'yup';
 import { useDispatch } from "react-redux";
 import {addUsers, fetchUsers} from "../../redux/UserSlice/UserSlice";
 import {IUsersItemType} from "../../redux/UserSlice/types";
-import {createAsyncThunk} from "@reduxjs/toolkit";
+import {AppDispatch} from "../../App";
+import {useAppSelector} from "../../Hooks";
 
 
 const Container = styled.div`
@@ -45,75 +46,78 @@ const Button = styled.button`
   font-size: 16px;
   cursor: pointer;
 `;
- const Form = styled.form`
- 
- `;
+const Form = styled.form`
 
-export const Users:FC<{}> = () => {
-// const initialValues: IUsersItemType = {
-//     name: '',
-//     surname: '',
-//     createdAt: 0,
-//     id: ''
-// },
-const dispatch = useDispatch()
-  const formik = useFormik({
+`;
+
+const Users: FC<{}> = () => {
+    const {users, isLoading, error} = useAppSelector((s) => s.usersReducer)
+    if (isLoading) return <div>"Loading..."</div>
+    const dispatch = useDispatch<AppDispatch>()
+    const formik = useFormik({
         initialValues: {
             name: '',
             surname: '',
             createdAt: 0,
             id: ''
         },
-    validationSchema: Yup.object().shape({
-        name: Yup.string()
-            .min(2, 'Too Short!')
-            .max(10, 'Too Long!')
-            .required('Required'),
-        surname: Yup.string()
-            .min(2, 'Too Short!')
-            .max(12, 'Too Long!')
-            .required('Required'),
-    }),
+        validationSchema: Yup.object().shape({
+            name: Yup.string()
+                .min(2, 'Too Short!')
+                .max(10, 'Too Long!'),
+            // .required('Required'),
+            surname: Yup.string()
+                .min(2, 'Too Short!')
+                .max(12, 'Too Long!'),
+            // .required('Required'),
+        }),
         onSubmit: (values: IUsersItemType) => {
-        alert(JSON.stringify(values))
-            // dispatch(addUsers(values))
-            console.log("1234")
-        // formik.resetForm()
-        // toast.success('User added')
-    }})
+            alert(JSON.stringify(values))
+            dispatch(addUsers(values))
 
-  return (
+            formik.resetForm()
+            // toast.success('User added')
+        }
+    })
 
-      <Container>
-          <Form onSubmit={formik.handleSubmit}>
-              <Title>Add new user</Title>
-              <InputCollection>
-                  <NameCase>
-                      <InputDesc>Name</InputDesc>
-                      <Input placeholder="..."
-                             value={formik.values.name}
-                             id='name'
-                             name="name"
-                             type="text"
-                             onChange={formik.handleChange}
+    return (
 
-                      />
-                  </NameCase>
-                  <SurnameCase>
-                      <InputDesc>Surname</InputDesc>
-                      <Input placeholder="..."
-                             value={formik.values.surname}
-                             id='surname'
-                             name="surname"
-                             type="text"
-                             onChange={formik.handleChange}
-                      />
-                  </SurnameCase>
-              </InputCollection>
-              <Button type="submit" >Create user</Button>
-          </Form>
+        <Container>
+            <Form onSubmit={formik.handleSubmit}>
+                <Title>Add new user</Title>
+                <InputCollection>
+                    <NameCase>
+                        <InputDesc>Name</InputDesc>
+                        <Input placeholder="..."
+                               value={formik.values.name}
+                               id='name'
+                               name="name"
+                               type="text"
+                               onChange={formik.handleChange}
 
- </Container>
+                        />
+                    </NameCase>
+                    <SurnameCase>
+                        <InputDesc>Surname</InputDesc>
+                        <Input placeholder="..."
+                               value={formik.values.surname}
+                               id='surname'
+                               name="surname"
+                               type="text"
+                               onChange={formik.handleChange}
+                        />
+                    </SurnameCase>
+                </InputCollection>
+                <Button type="submit">Create user</Button>
+                {/*{*/}
+                {/*    users.map((item) => (*/}
+                {/*        <div key={item.id}>{item.name}</div>*/}
+
+                {/*    ))*/}
+                {/*}*/}
+
+            </Form>
+        </Container>
     );
 };
 

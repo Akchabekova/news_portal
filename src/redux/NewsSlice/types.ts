@@ -10,6 +10,6 @@ export interface INewsItemType{
   createdAt: number,
   view: number,
   likes: number,
-  dislakes: number,
+  dislikes: number,
   id: string
 }
